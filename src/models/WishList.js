@@ -14,6 +14,9 @@ export const WishListItem = types
     },
     changePrice(newPrice){
       self.price = newPrice
+    },
+    changeImage(newImage){
+      self.image = newImage
     }
   }))
 
