@@ -11,7 +11,6 @@ class WishListItemView extends Component {
   }
   render(){
     const { item } = this.props
-    debugger
     return this.state.isEditing ? (
       this.renderEditabel()
     ) : (
@@ -21,6 +20,7 @@ class WishListItemView extends Component {
         <span>{item.price}</span>
         <span>
           <button onClick={this.onToggleEdit}>Edit</button>
+          <button onClick={item.remove}>Remove</button>
         </span>
       </li>
     )
