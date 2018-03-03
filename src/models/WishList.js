@@ -19,10 +19,18 @@ export const WishListItem = types
 
 export const WishList = types
   .model({
-    items: types.optional(types.array(WishListItem), [])
+    items: types.optional(types.array(WishListItem), []),
   })
   .actions(self => ({
     add(item) {
       self.items.push(item)
+    }
+  }))
+  .views(self => ({
+    // cached
+    get totalPrice(){
+      return self.items.reduce((sum, entry) => {
+        return sum + entry.price
+      }, 0)
     }
   }))
