@@ -1,5 +1,6 @@
 import { WishListItem, WishList } from './WishList'
 import { getSnapshot, onSnapshot, onPatch } from 'mobx-state-tree'
+import { reaction } from 'mobx'
 
 it('can create a instance of a model', () => {
   const item = WishListItem.create({
@@ -68,4 +69,34 @@ it('can add new items', () => {
   expect(getSnapshot(list)).toMatchSnapshot() // What is toMatchSnapshot()?
 
   expect(states).toMatchSnapshot()
+})
+
+it('can calculate the total price of a wishlist', () => {
+  const list = WishList.create({
+    items: [
+      {
+        name: "Machine Gun Preacher",
+        price: 7.35,
+        image: "https://images-na.ssl-images-amazon.com/images/I/91AFFK9fwkL._SY445_.jpg"
+      },
+      {
+        name: "LEGO Mindstorms EV3",
+        price: 349.95,
+        image: "https://images-na.ssl-images-amazon.com/images/I/71CpQw%2BufNL._SL1000_.jpg"
+      }
+    ]
+  })
+
+  expect(list.totalPrice).toBe(357.3)
+
+  let changed = 0
+  // if totalPrice change, callback
+  reaction(() => list.totalPrice, () => changed++)
+
+  expect(changed).toBe(0)
+  list.items[0].changeName("Test")
+  expect(changed).toBe(0)
+  list.items[0].changePrice(10)
+  expect(changed).toBe(1)
+
 })
