@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './assets/index.css';
 import App from './components/App';
 import { WishList } from './models/WishList'
-import { onSnapshot } from 'mobx-state-tree'
+import { getSnapshot } from 'mobx-state-tree'
 
 let initialState = {
   items: [
@@ -19,16 +19,23 @@ let initialState = {
     }
   ]
 }
-const wishListStorage = localStorage.getItem('wishlistapp')
-if (wishListStorage) {
-  const json = JSON.parse(wishListStorage)
-  if (WishList.is(json)) initialState = json
+
+let wishList = WishList.create(initialState)
+
+function renderApp() {
+  ReactDOM.render(<App wishList={wishList}/>, document.getElementById('root'));
 }
 
-const wishList = WishList.create(initialState)
+renderApp()
 
-ReactDOM.render(<App wishList={wishList}/>, document.getElementById('root'));
+if (module.hot) {
+  module.hot.accept(['./components/App'], () => {
+    renderApp()
+  })
 
-onSnapshot(wishList, snapshot => {
-  localStorage.setItem('wishlistapp', JSON.stringify(snapshot))
-})
+  module.hot.accept(['./models/WishList'], () => {
+    const snapshot = getSnapshot(WishList)
+    wishList = WishList.create(snapshot)
+    renderApp()
+  })
+}
